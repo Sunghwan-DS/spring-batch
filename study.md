@@ -24,3 +24,19 @@
 Job이 구동되면 Step을 실행하고 Step이 구동되면 Taskelt을 실행하도록 설정함.
 
 Job은 처리될 전체 일을 의미하여 Step은 일의 각 항목, Taskelt은 Step에서 이루어질 실제 비지니스 로직을 담게 된다.
+
+
+### [3. DB 스키마 생성](https://github.com/Sunghwan-DS/spring-batch/commit/033d97ca74667d36004b09c8be1c1b75d659a607)
+
+1. docker 설치
+2. $ docker pull mysql
+3. $ docker run --name springboot-mysql -e MYSQL_ROOT_PASSWORD=pass -d -p 3306:3306 mysql
+4. $ docker start springboot-mysql
+5. $ docker exec -it springboot-mysql bash
+6. $ mysql -u root -p
+
+##### DB 생성
+$ CREATE DATABASE springbatch default CHARACTER SET UTF8
+
+##### 테이블 생성
+spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysql.sql 참조
