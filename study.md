@@ -35,6 +35,12 @@ Job은 처리될 전체 일을 의미하여 Step은 일의 각 항목, Taskelt�
 5. $ docker exec -it springboot-mysql bash
 6. $ mysql -u root -p
 
+(+) window 환경에서 docker 사용하기
+1. 관리자 권한으로 파워쉘 열기
+2. 리눅스 서브시스템 활성 명령어 입력 (dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart)
+3. 가상 머신 플랫폼 기능 활성화 명령어 입력 (dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart)
+4. x64 머신용 최신 WSL2 Linux 커널 업데이트 패키지 다운로드 및 설치
+
 ##### DB 생성
 $ CREATE DATABASE springbatch default CHARACTER SET UTF8
 
