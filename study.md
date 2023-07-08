@@ -53,3 +53,23 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
 테이블이 누락된 경우
 - mysql initialize-schema: never 인 경우에는 Table doesn't exist 로 SQLSyntaxErrorException 오류 발생.
 - h2 메모리 DB의 경우 default 설정인 embedded 로 오류없이 정상 실행된다.
+
+
+### 5. DB 스키마
+- Job 관련 테이블
+  - BATCH_JOB_INSTANCE
+    - Job 이 실행될 때 JobInstance 정보가 저장되며 job_name과 job_key를 키로 하여 하나의 데이터가 저장
+    - 동일한 job_name과 job_key로 중복 저장될 수 없다
+  - BATCH_JOB_EXECUTION
+    - Job의 실행정보가 저장되며 JOB 생성, 시작, 종료 시간, 실행상태, 메시지 등을 관리
+  - BATCH_JOB_EXECUTION_PARAMS
+    - Job과 함께 실행되는 JobParameter 정보를 저장
+  - BATCH_JOB_EXECUTION_CONTEXT
+    - Job의 실행동안 여러가지 상태정보, 공유 데이터를 직렬화(Json 형식)해서 저장
+    - Step 간 서로 공유 가능함
+- Step 관련 테이블
+  - BATCH_STEP_EXECUTION
+    - Step의 실행정보가 저장되며 생성, 시작, 종료 시간, 실행상태, 메시지 등을 관리
+  - BATCH_STEP_EXECUTION_CONTEXT
+    - Step의 실행동안 여러가지 상태정보, 공유 데이터를 직렬화(Json 형식)해서 저장
+    - Step 별로 저장되며 Step 간 서로 공유할 수 없음
