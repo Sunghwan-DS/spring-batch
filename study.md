@@ -26,7 +26,7 @@ Job이 구동되면 Step을 실행하고 Step이 구동되면 Taskelt을 실행�
 Job은 처리될 전체 일을 의미하여 Step은 일의 각 항목, Taskelt은 Step에서 이루어질 실제 비지니스 로직을 담게 된다.
 
 
-### [3. DB 스키마 생성](https://github.com/Sunghwan-DS/spring-batch/commit/033d97ca74667d36004b09c8be1c1b75d659a607)
+### 3. DB 스키마 생성
 
 1. docker 설치
 2. $ docker pull mysql
@@ -46,3 +46,10 @@ $ CREATE DATABASE springbatch default CHARACTER SET UTF8
 
 ##### 테이블 생성
 spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysql.sql 참조
+
+
+### [4. table이 누락되었을 때 배치 동작 테스트용 Configuration 추가](https://github.com/Sunghwan-DS/spring-batch/commit/7e5feecf27a157cbcb2b06a646d78273f21e757f)
+
+테이블이 누락된 경우
+- mysql initialize-schema: never 인 경우에는 Table doesn't exist 로 SQLSyntaxErrorException 오류 발생.
+- h2 메모리 DB의 경우 default 설정인 embedded 로 오류없이 정상 실행된다.
