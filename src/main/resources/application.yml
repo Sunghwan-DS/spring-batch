@@ -25,3 +25,6 @@ spring:
       username: root
       password: pass
       driver-class-name: com.mysql.jdbc.Driver
+  batch:
+    jdbc:
+      initialize-schema: always
