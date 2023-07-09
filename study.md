@@ -1,6 +1,6 @@
 # Spring Batch Study
 
-### [1. 스프링 배치가 작동하기 위한 어노테이션 선언](https://github.com/Sunghwan-DS/spring-batch/commit/6f4924c20f174cef9a4938017beeb8f3826686b8)
+## [1. 스프링 배치가 작동하기 위한 어노테이션 선언](https://github.com/Sunghwan-DS/spring-batch/commit/6f4924c20f174cef9a4938017beeb8f3826686b8)
 
 @EnableBatchProcessing -> SimpleBatchConfiguration -> BatchConfigurerConfiguration(BasicBatchController, JpaBatchConfigurer)
 
@@ -19,14 +19,14 @@
    - 사용자 정의 BatchConfigurer 인터페이스를 구현하여 사용할 수 있음
 
 
-### [2. Hello Spring Batch Job 구성하기](https://github.com/Sunghwan-DS/spring-batch/commit/033d97ca74667d36004b09c8be1c1b75d659a607)
+## [2. Hello Spring Batch Job 구성하기](https://github.com/Sunghwan-DS/spring-batch/commit/033d97ca74667d36004b09c8be1c1b75d659a607)
 
 Job이 구동되면 Step을 실행하고 Step이 구동되면 Taskelt을 실행하도록 설정함.
 
 Job은 처리될 전체 일을 의미하여 Step은 일의 각 항목, Taskelt은 Step에서 이루어질 실제 비지니스 로직을 담게 된다.
 
 
-### 3. DB 스키마 생성
+## 3. DB 스키마 생성
 
 1. docker 설치
 2. $ docker pull mysql
@@ -41,21 +41,21 @@ Job은 처리될 전체 일을 의미하여 Step은 일의 각 항목, Taskelt�
 3. 가상 머신 플랫폼 기능 활성화 명령어 입력 (dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart)
 4. x64 머신용 최신 WSL2 Linux 커널 업데이트 패키지 다운로드 및 설치
 
-##### DB 생성
+#### DB 생성
 $ CREATE DATABASE springbatch default CHARACTER SET UTF8
 
-##### 테이블 생성
+#### 테이블 생성
 spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysql.sql 참조
 
 
-### [4. table이 누락되었을 때 배치 동작 테스트용 Configuration 추가](https://github.com/Sunghwan-DS/spring-batch/commit/7e5feecf27a157cbcb2b06a646d78273f21e757f)
+## [4. table이 누락되었을 때 배치 동작 테스트용 Configuration 추가](https://github.com/Sunghwan-DS/spring-batch/commit/7e5feecf27a157cbcb2b06a646d78273f21e757f)
 
 테이블이 누락된 경우
 - mysql initialize-schema: never 인 경우에는 Table doesn't exist 로 SQLSyntaxErrorException 오류 발생.
 - h2 메모리 DB의 경우 default 설정인 embedded 로 오류없이 정상 실행된다.
 
 
-### 5. DB 스키마
+## 5. DB 스키마
 - Job 관련 테이블
   - BATCH_JOB_INSTANCE
     - Job 이 실행될 때 JobInstance 정보가 저장되며 job_name과 job_key를 키로 하여 하나의 데이터가 저장
@@ -73,3 +73,20 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
   - BATCH_STEP_EXECUTION_CONTEXT
     - Step의 실행동안 여러가지 상태정보, 공유 데이터를 직렬화(Json 형식)해서 저장
     - Step 별로 저장되며 Step 간 서로 공유할 수 없음
+
+
+## 6. 스프링 배치 도메인 이해
+### 6.1. Job
+1. 기본 개념
+   - 배치 계층 구조에서 가장 상위에 있는 개념으로서 하나의 배치작업 자체를 의미함
+     - "API 서버의 접속 로그 데이터를 통계 서버로 옮기는 배치" 인 Job 자체를 의미한다
+   - Job Configuration 을 통해 생성되는 개체 단위로서 배치작업을 어떻게 구성하고 실행할 것인지 전체적으로 설정하고 명세해 놓은 객체
+   - 배치 Job을 구성하기 위한 최상위 인터페이스이며 스프링 배치가 기본 구현체를 제공한다
+   - 여러 Step을 포함하고 있는 컨테이너로서 반드시 한 개 이상의 Step으로 구성해야 함
+2. 기본 구현체
+   - SimpleJob
+     - 순차적으로 Step을 실행시키는 Job
+     - 모든 Job에서 유용하게 사용할 수 있는 표준 기능을 갖고 있음
+   - FlowJob
+     - 특정한 조건과 흐름에 따라 Step을 구성하여 실행시키는 Job
+     - Flow 객체를 실행시켜서 작업을 진행함
