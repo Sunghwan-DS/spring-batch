@@ -213,6 +213,7 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
             factory.setMaxVarCharLength(1000); // varchar 최대 길이(기본값 2500)
             return factory.getObject(); // Proxy 객체가 생성됨 (트랜잭션 Advice 적용 등을 위해 AOP 기술 적용)
          }
+         ```
      - In Memory 방식으로 설정 - MapJobRepositoryFactoryBean
        - 성능 등의 이유로 도메인 오브젝트를 굳이 데이터베이스에 저장하고 싶지 않은 경우
        - 보통 Test 나 프로토타입의 빠른 개발이 필요할 때 사용
@@ -223,6 +224,7 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
             factory.setTransactionManager(transactionManager); // ResourcelessTransactionManager 사용
             return factory.getObject();
          }
+         ```
 
 ### 6.10. JobLauncher
 1. 기본 개념
@@ -259,6 +261,7 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
            name: ${job.name:NONE}
          initialize-schema: NEVER
          tablePrefix: SYSTEM
+       ```
 3. Job 실행 옵션
    - 지정한 Batch Job 만 실행하도록 할 수 있음
    - spring.batch.job.name: ${job.name:NONE}
@@ -280,3 +283,27 @@ spring-batch-core-4.3.8.jar > org > springframework > batch > core > schema-mysq
    - FlowJobBuilder
      - FlowJob 을 생성하는 Builder 클래스
      - 내부적으로 FlowBuilder 를 반환함으로써 Flow 실행과 관련된 여러 설정 API 를 제공한다
+
+### 7.3. SimpleJob
+1. 기본 개념
+   - SimpleJob 은 Step 을 실행시키는 Job 구현체로서 SimpleJobBuilder 에 의해 생성된다
+   - 여러 단계의 Step 으로 구성할 수 있으며 Step 을 순차적으로 실행시킨다
+   - 모든 Step 의 실행이 성공적으로 완료되어야 Job 이 성공적으로 완료된다
+   - 맨 마지막에 실행한 Step 의 BatchStatus 가 Job 의 최종 BatchStatus 가 된다
+2. 흐름
+   - 순차적으로 실행되는 각 Step 의 응답값이 모두 COMPLETED 여야 Job 이 COMPLETED 의 응답값을 전달한다
+   - 어떤 Step 이 실패하여 FAILED 의 응답값을 Job 에 전달할 경우 이후 Step 은 실행되지 않으며 Job 도 FAILED 의 응답값을 전달한다
+
+#### 개념 및 API 소개
+```java
+public Job batchJob() {
+    return jobBuilderFactory.get("batchJob")                        // JobBuilder 를 생성하는 팩토리, Job 의 이름을 매개변수로 받음
+                            .start(Step)                            // 처음 실행 할 Step 설정, 최초 한번 설정, 이 메서드를 실행하면 SIMpleJobBuilder 반환
+                            .next(Step)                             // 다음에 실행 할 Step 설정, 횟수는 제한이 없으며 모든 next() 의 Step 이 종료가 되면 Job 이 종료된다
+                            .incrementer(JobParametersIncrementer)  // JobParameter 의 값을 자동으로 증가시켜주는 JobParametersIncremeter 설정
+                            .preventRestart(true)                   // Job 의 재시작 가능 여부 설정, 기본값은 true
+                            .validator(JobParameterValidator)       // JobParameter 를 실행하기 전에 올바른 구성이 되었는지 검증하는 JobParametersValidator 설정
+                            .listener(JobExecutionListener)         // Job 라이프 사이클의 특정 시점에 콜백 제공받고록 JOBExecutionListener 설정
+                            .build();                               // SimpleJob 생성
+    }
+```
