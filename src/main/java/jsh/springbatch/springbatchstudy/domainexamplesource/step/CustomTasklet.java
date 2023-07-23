@@ -1,4 +1,4 @@
-package jsh.springbatch.springbatchstudy;
+package jsh.springbatch.springbatchstudy.domainexamplesource.step;
 
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;

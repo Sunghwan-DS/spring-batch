@@ -1,4 +1,4 @@
-package jsh.springbatch.springbatchstudy;
+package jsh.springbatch.springbatchstudy.domainexamplesource.jobinstance;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
