@@ -315,3 +315,10 @@ public Job batchJob() {
 2. 구조
    - JobParametersValidator - void validate(@Nullable JobParameters parameters)
    - JobParameters 값을 매개변수로 받아 검증함
+
+### 7.5. SimpleJob - preventRestart()
+1. 기본 개념
+   - Job 의 재시작 여부를 설정
+   - 기본 값은 true 이며 false 로 설정 시 "이 Job 은 재시작을 지원하지 않는다" 라는 의미
+   - Job 이 실패해도 재시작이 안되며 Job 을 재시작하려고 하면 JobRestartException 이 발생
+   - 재시작과 관련있는 기능으로 Job 을 처음 실행하는 것과는 아무런 상관 없음
