@@ -322,3 +322,21 @@ public Job batchJob() {
    - 기본 값은 true 이며 false 로 설정 시 "이 Job 은 재시작을 지원하지 않는다" 라는 의미
    - Job 이 실패해도 재시작이 안되며 Job 을 재시작하려고 하면 JobRestartException 이 발생
    - 재시작과 관련있는 기능으로 Job 을 처음 실행하는 것과는 아무런 상관 없음
+
+### 7.6. SimpleJob - incrementer()
+1. 기본 개념
+   - JobParameters 에서 필요한 값을 증가시켜 다음에 사용될 JobParameters 오브젝트를 리턴
+   - 기존의 JobParameter 변경없이 Job 을 여러 번 시작하고자 할 때
+   - RunIdIncrementer 구현체를 지원하며 인터페이스를 직접 구현할 수 있음
+   - ```java
+     @Override
+     public JobParameters getNext(@Nullable JobParameters parameters) {
+        
+        JobParameters params = (parameters == null) ? new JobParameters() : parameters;
+        
+        long id = params.getLong(key, new Long(0)) + 1;
+        return new JobParametersBuilder(params).addLong(key, id).toJobParameters();
+     }
+     ```
+2. 구조
+   - JobParametersIncrementer - JobParameters getNext(@Nullable JobParameters parameters);
