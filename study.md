@@ -436,3 +436,21 @@ public Job batchJob() {
    - 다수의 구현체들이 ItemWriter 와 ItemStream 을 동시에 구현하고 있다
      - 파일의 스트림을 열거나 종료, DB 커넥션을 열거나 종료, 출력 장치 초기화 등의 작업
    - 보통 ItemReader 구현체와 1:1 대응 관계인 구현체들로 구성되어 있다
+
+### 8.7. ItemProcessor
+1. 기본 개념
+   - 데이터를 출력하기 전에 데이터를 가공, 변형, 필터링하는 역할
+   - ItemReader 및 ItemWriter 와 분리되어 비즈니스 로직을 구현할 수 있다
+   - ItemReader 로 부터 받은 아이템을 특정 타입으로 변환해서 ItemWriter 에 넘겨줄 수 있다
+   - ItemReader 로 부터 받은 아이템들 중 필터 과정을 거쳐 원하는 아이템들만 ItemWriter 에게 넘겨줄 수 있다
+       - ItemProcessor 에서 process() 실행결과 null 을 반환하면 Chunk<O> 에 저장되지 않기 때문에 결국 ItemWriter 에 전달되지 않는다
+   - ChunkOrientedTasklet 실행 시 선택적 요소이기 때문에 청크 기반 프로세싱에서 ItemProcessor 단계가 반드시 필요한 것은 아니다
+2. 구조
+   - ItemProcessor<I, O>
+     - O process(@NonNull I item) throws Exception
+   - O process
+       - <I> 제네릭은 ItemReader 에서 받은 데이터 타입 지정
+       - <O> 제네릭은 ItemWriter 에게 보낼 데이터 타입 지정
+       - 아이템 하나씩 가공 처리하며 null 리턴할 경우 해당 아이템은 Chunk<O> 에 저장되지 않음
+   - ItemStream 을 구현하지 않는다
+   - 거의 대부분 Customizing 해서 사용하기 때문에 기본적으로 제공되는 구현체가 적다
