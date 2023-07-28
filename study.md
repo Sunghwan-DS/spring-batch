@@ -473,3 +473,86 @@ public Job batchJob() {
        // 열려있는 모든 리소스를 안전하게 해제하고 닫음
        void close() throws ItemStreamException
        ```
+
+## 9. 스프링 배치 청크 프로세스 활용 - ItemReader
+### 9.1. XML StaxEventItemReader
+1. 개념 및 API 소개
+   - JAVA XML API
+     - DOM 방식
+       - 문서 전체를 메모리에 로드한 후 Tree 형태로 만들어서 데이터를 처리하는 방식, pull 방식
+       - 엘리멘트 제어는 유연하나 문서 크기가 클 경우 메모리 사용이 많고 속도가 느림
+     - SAX 방식
+       - 문서의 항목을 읽을 때 마다 이벤트가 발생하여 데이터를 처리하는 push 방식
+       - 메모리 비용이 적고 속도가 빠른 장점은 있으나 엘리멘트 제어가 어려움
+     - StAX 방식 (Streaming API for XML)
+       - DOM 과 SAX 의 장점과 단점을 보완한 API 모델로서 push 와 pull 을 동시에 제공함
+       - XML 문서를 읽고 쓸 수 있는 양방향 파서기 지원
+       - XML 파일의 항목에서 항목으로 직접 이동하면서 Stax 파서기를 통해 구문 분석
+       - 유형
+         - Iterator API 방식
+           - XMLEventReader 의 nextEvent() 를 호출해서 이벤트 객체를 가지고 옴
+           - 이벤트 객체는 XML 태그 유형 (요소, 텍스트, 주석 등) 에 대한 정보를 제공함
+         - Cursor API 방식
+           - JDBC ResultSet 처럼 작동하는 API 로서 XMLStreamReader 는 XML 문서의 다음 요소로 커서를 이동한다
+           - 커서에서 직접 메서드를 호출하여 현재 이벤트에 대한 자세한 정보를 얻는다
+   - Spring-OXM
+     - 스프링의 Object XML Mapping 기술로 XML 바인딩 기술을 추상화함
+       - Marshaller
+         - marshall - 객체를 XML 로 직렬화하는 행위
+       - Unmarchaller
+         - unmarshall - XML 을 객체로 역직렬화하는 행위
+       - Marshaller 와 Unmarshaller 바인딩 기능을 제공하는 오픈소스로 JaxB2, Castor, XmlBeans, Xstream 등이 있다
+     - 스프링 배치는 특정한 XML 바인딩 기술을 강요하지 않고 Spring OXM 에 위임한다
+       - 바인딩 기술을 제공하는 구현체를 선택해서 처리하도록 한다
+   - Spring Batch XML
+     - 스프링 배치에서는 StAX 방식으로 XML 문서를 처리하는 StaxEventItemReader 를 제공한다
+     - XML 을 읽어 자바 객체로 매핑하고 자바 객체를 XML 로 쓸 수 있는 트랜잭션 구조를 지원
+2. StAX 아키텍처
+   - XML 전체 문서가 아닌 조각 단위로 구문을 분석하여 처리할 수 있다.
+     - 루트 엘리먼트 사이에 있는 것들은 전부 하나의 조각(Fragment) 을 구성한다
+   - 조각을 읽을 때 DOM 의 pull 방식을 사용하고 조각을 객체로 바인딩 처리하는 것은 SAX 의 push 방식을 사용한다
+   - ```java
+     public StaxEventItemReader itemReader() {
+        return StaxEventItemReaderBuilder<T>().name(String name)
+                                              .resource(Resource)                               // 읽어야 할 리소스 설정
+                                              .addFlagmentRootElements(String... rootElements)  // Fragment 단위의 루트 엘리먼트 설정, 이 루트 조각 단위가 객체와 매핑하는 기준
+                                              .unmarshaller(Unmarshaller)                       // Unmarshaller 객체 설정
+                                              .saveState(boolean)                               // 상태 정보 저장 여부 설정, 기본값은 true
+                                              .build();                      
+     }
+     ```
+     
+3. StaxEventItemReader 기본 개념
+   - Stax API 방식으로 데이터를 읽어들이는 ItemReader
+   - Spring-OXM 과 Xstream 의존성을 추가해야 한다
+   - pom.xml
+     - ```xml
+       <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-oxm</artifactId>
+         <version>5.3.7</version>
+       </dependency>
+       <dependency>
+         <groupId>com.thoughworks.xstream</groupId>
+         <artifactId>xstream</artifactId>
+         <version>1.4.16</version>
+       </dependency>
+       ```
+   - StaxEventItemReader<T>
+     - ```java
+       // XML 조각을 독립형으로 XML 문서로 처리하는 것을 지원하는 이벤트 판독기
+       FragmentEventReader fragmentReader
+       
+       // XML 이벤트 구문 분석을 위한 최상위 인터페이스
+       XMLEventReader eventReader
+       
+       // XML 문서를 객체로 직렬화하는 인터페이스
+       Unmarshaller unmarshaller
+       
+       // 다양한 리소스에 접근하도록 추상화한 인터페이스
+       Resource resource
+       
+       // 조각단위의 루트 엘리먼트명을 담은 리스트 변수
+       List<QName> fragmentRootElementNames
+       ```
+       
