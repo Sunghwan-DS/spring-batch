@@ -556,3 +556,33 @@ public Job batchJob() {
        List<QName> fragmentRootElementNames
        ```
        
+## 10. 스프링 배치 청크 프로세스 활용 - ItemWriter
+
+
+## 11. 스프링 배치 청크 프로세스 활용 - ItemProcessor
+### 11.1. CompositeItemProcessor
+1. 기본 개념
+   - ItemProcessor 들은 연결(Chaining)해서 위임하면 각 ItemProcessor 를 실행시킨다
+   - 이전 ItemProcessor 반환 값은 다음 ItemProcessor 값으로 연결된다
+2. API
+```java
+public ItemProcessor itemProcessor() {
+    return new CompositeItemProcessorBuilder<>()
+    .delegate(ItemProcessor<?, ?>... delegates) // 체이닝 할 ItemProcessor 객체 설정
+    .build();
+    }
+```
+
+### 11.2. ClassifierCompositeItemProcessor
+1. 기본 개념
+   - Classifier 로 라우팅 패턴을 구현해서 ItemProcessor 구현체 중에서 하나를 호출하는 역할을 한다
+2. API
+```java
+public ItemProcessor itemProcessor() {
+    return new ClassifierCompositeItemProcessorBuilder<>()
+    .classifier(Classifier) // 분류자 설정
+    .build();
+    }
+```
+Classifier<C, T> // C의 분류에 따라 적절한 T 를 반환
+T classify
