@@ -617,6 +617,28 @@ public Step batchStep() {
   - 시작 행 번호를 지정하고 페이지에 반환시키고자 하는 행의 수를 지정한 후 사용 – Offset, Limit
   - 페이징 단위의 결과만 메모리에 할당하기 때문에 메모리 사용량이 적어지는 장점이 있다
   - Connection 연결 유지 시간이 길지 않고 메모리 공간을 효율적으로 사용해야 하는 데이터 처리에 적합할 수 있다
+
+### 9.3. DB - JdbcCursorItemReader
+- 기본 개념
+  - Spring Batch 4.3 버전부터 지원함
+  - Cursor 기반의 JPA 구현체로서 EntityManagerFactory 객체가 필요하며 쿼리는 JPQL 을 사용한다
+- API
+```java
+public JdbcCursorItemReader itemReader() {
+    return new JdbcCursorItemReaderBuilder<T>()
+    .name("cursorItemReader")
+    .fetchSize(int chunkSize)       // Cursor 방식으로 데이터를 가지고 올 때 한번에 메모리에 할당할 크기를 설정한다
+    .dataSource(DataSource)         // DB 에 접근하기 위해 Datasource 설정
+    .rowMapper(RowMapper)           // 쿼리 결과로 반환되는 데이터와 객체를 매핑하기 위한 RowMapper 설정
+    .beanRowMapper(Class<T>)        // 별도의 RowMapper 을 설정하지 않고 클래스 타입을 설정하면 자동으로 객체와 매핑
+    .sql(String sql)                // ItemReader 가 조회할 때 사용할 쿼리 문장 설정
+    .queryArguments(Object... args) // 쿼리 파라미터 설정
+    .maxItemCount(int count)        // 조회할 최대 item 수
+    .currentItemCount(int count)    // 조회 item 의 시작 지점
+    .maxRows(int maxRows)           // ResultSet 오브젝트가 포함할 수 있는 최대 행 수
+    .build();
+}
+```
        
 ## 10. 스프링 배치 청크 프로세스 활용 - ItemWriter
 
