@@ -888,6 +888,18 @@ public Step batchStep() {
     - 인터페이스 방식
         - implements StepExecutionListener
 
+### 13.2. JobExecutionListener / StepExecutionListener
+- JobExecutionListener
+    - void beforeJob(JobExecution jobExecution)
+    - void afterJob(JobExecution jobExecution)
+    - Job 의 성공여부와 상관없이 호출된다
+    - 성공/실패 여부는 JobExecution 을 통해 알 수 있다.
+- StepExecutionListener
+    - void beforeStep(StepExecution stepExecution)
+    - void afterStep(StepExecution stepExecution)
+    - Step 의 성공여부와 상관없이 호출된다
+    - 성공/실패 여부는 StepExecution 을 통해 알 수 있다
+
 ## 14. 스프링 배치 테스트 및 운영
 ### 15.1. Spring Batch Test
 - 스프링 배치 4.1.x 이상 버전 (부트 2.1) 기준
