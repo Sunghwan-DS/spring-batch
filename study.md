@@ -918,6 +918,16 @@ public Step batchStep() {
     - void afterWrite(List<? extends S> items)
     - void onWriteError(Exception ex, List<? extends S> items)
 
+### 13.4. SkipListener & RetryListener
+- SkipListener
+    - void onSkipInRead(Throwable t)
+    - void onSkipInWrite(S item, Throwable t)
+    - void onSkipInProgress(T item, Throwable t)
+- RetryListener
+    - boolean open(RetryContext context, RetryCallback<T, E> callback)
+    - void close(RetryContext context, RetryCallback<T, E> callback, Throwable throwable)
+    - void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable)
+
 ## 14. 스프링 배치 테스트 및 운영
 ### 15.1. Spring Batch Test
 - 스프링 배치 4.1.x 이상 버전 (부트 2.1) 기준
