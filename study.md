@@ -900,6 +900,24 @@ public Step batchStep() {
     - Step 의 성공여부와 상관없이 호출된다
     - 성공/실패 여부는 StepExecution 을 통해 알 수 있다
 
+### 13.3. ChunkListener / ItemReadListener / ItemProcessListener / ItemWriteListener
+- ChunkListener
+    - void beforeChunk(ChunkContext context)
+    - void afterChunk(ChunkContext context)
+    - void afterChunkError(ChunkContext context)
+- ItemReadListener
+    - void beforeRead()
+    - void afterRead(T item)
+    - void onReadError(Exception ex)
+- ItemProcessListener
+    - void beforeProcess(T item)
+    - void afterProcess(T item, @Nullable S result)
+    - void onProcessError(T item, Exception ex)
+- ItemWriteListener
+    - void beforeWrite(List<? extends S> items)
+    - void afterWrite(List<? extends S> items)
+    - void onWriteError(Exception ex, List<? extends S> items)
+
 ## 14. 스프링 배치 테스트 및 운영
 ### 15.1. Spring Batch Test
 - 스프링 배치 4.1.x 이상 버전 (부트 2.1) 기준
