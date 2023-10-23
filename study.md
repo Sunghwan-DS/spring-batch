@@ -929,7 +929,7 @@ public Step batchStep() {
     - void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable)
 
 ## 14. 스프링 배치 테스트 및 운영
-### 15.1. Spring Batch Test
+### 14.1. Spring Batch Test
 - 스프링 배치 4.1.x 이상 버전 (부트 2.1) 기준
 - pom.xml
   - ```xml
@@ -988,7 +988,7 @@ public Step batchStep() {
   - @EnableBatchProcessing - 테스트 시 배치환경 및 설정 초기화를 자동 구동하기 위한 어노테이션
   - 테스트 클래스마다 선언하지 않고 공통으로 사용하기 위함
     
-### 15.2. JobExplorer / JobRegistry / JobOperator
+### 14.2. JobExplorer / JobRegistry / JobOperator
 - JobExplorer
   - JobRepository 의 readonly 버전
   - 실행 중인 Job 의 실행 정보인 JobExecution 또는 Step 의 실행 벙보인 StepExecution 을 조회할 수 있다
